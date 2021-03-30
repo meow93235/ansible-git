@@ -1,0 +1,28 @@
+---
+- hosts: all
+  remote_user: root
+  become: yes
+  gather_facts: false
+  tasks:
+    - name: test connection
+      ping:
+      register: message
+    
+    - name: print debug message
+      debug:
+        msg: "{{ message }} "
+
+    - name: Update and upgrade apt packages
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 #One day
+    
+    - name: Set the time zone 
+      shell: timedatectl set-timezone Asia/Taipei
+    
+    - name: Restart system log
+      shell: systemctl restart rsyslog
+
+    - name: Unconditionally reboot the machine with all defaults
+      reboot:
